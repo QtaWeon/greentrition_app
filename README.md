@@ -36,7 +36,13 @@ Your data is handled with care. User data is anonymized and securely stored with
 
 ## Screenshots 
 
-(Add screenshots here)
+<p float="left">
+  <img src="./assets/images/1.jpg" width="400" />
+  <img src="./assets/images/2.jpg" width="400" />
+  <img src="./assets/images/3.jpg" width="400" />
+  <img src="./assets/images/4.jpg" width="400" />
+
+</p>
 
 # Requirements
 - Flutter version 3.0.0
