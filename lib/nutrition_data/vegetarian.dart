@@ -1,0 +1,2 @@
+const Set vegetarianSet = {
+"fisch", "schnitzel", "steaks", "frischwurst", "hackfleisch", "streichwurst", "pökelwurst", "krebstiere", "gelatine", "schweinefleisch", "rindfleisch", "speck", "hähnchenfleisch", "fleischbrät", "schafsaitling", "schweineleber", "tierisches lab", "bio-schweinespeck", "thuhnfisch", "sardinen", "makrelen", "fleischbrühe", "heringsfilets", "hähnchenseparatorenfleisch", "garnelen", "makrele", "scomber scombrus", "weichtiere", "tintenfischtinte", "sepiatinte", "sepia-tinte", "sepia tinte"};
