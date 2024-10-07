@@ -1,6 +1,6 @@
 # greentrition - Intolerance nutrition barcode scan app. 
 
-greentrition is a Flutter app that empowers users with food intolerances to make informed choices. Scan barcodes, discover ingredients, and find products that fit your dietary needs. (German version)
+greentrition is a Flutter app that empowers users with food intolerances to make informed choices. Scan barcodes, discover ingredients, and find products that fit your dietary needs. (The project was originally developed in 2021 as a personal project and is of German language.)
 
 ## Features
 
