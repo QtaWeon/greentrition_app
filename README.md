@@ -14,7 +14,8 @@ greentrition is a Flutter app that empowers users with food intolerances to make
 * **Personalized Filtering:**  Filter products and recipes based on your individual needs.
 * **User-Friendly Interface:**  Intuitive design for a seamless experience.
 
-## How it Works
+
+## Architecture
 
 greentrition uses a powerful combination of technologies:
 
@@ -22,7 +23,155 @@ greentrition uses a powerful combination of technologies:
 * **Firebase:**  Data communication and data storage for fast access.
 * **GraphQL:**  Efficiently communicates with the backend API.
 * **Node.js & GraphQL Endpoint:**  Handles user authentication and backend infrastructure.
+* **MongoDB:**  Securely stores user data and additional product information, that does not need real-time access.
 
+### Basic Communication Flow
+
+The app communicates with the backend through a GraphQL endpoint. The backend is responsible for user authentication and data storage. The following flow diagram illustrates the basic communication flow:
+
+```mermaid
+---
+title: Abstract Communication Diagram
+---
+graph LR
+    subgraph Client["App (Frontend/Client)"]
+    end
+
+    Firebase[(FirebaseDB)]
+    
+
+    subgraph NodeJS["NodeJS / GraphQL API"]
+    end
+
+    MongoDB[(MongoDB)]
+
+    Static[(Static File Server for Images)]
+    Client -- "Direct interaction (with token)" --> Firebase
+    Client -- "GraphQL API (with token)" --> NodeJS
+    NodeJS -- "Generates auth token" --> Client
+    NodeJS -- "Accesses data" --> MongoDB
+    Client -- "Accesses images" --> Static
+```
+
+### User Authentication 
+
+User authentication is a crucial aspect of the app. The following sequence diagram illustrates the user authentication process:
+
+```mermaid
+sequenceDiagram
+  participant Client
+  participant Cloudflare
+  participant API
+  participant Firebase
+  participant MongoDB
+
+  Client->>+Cloudflare: Encoded credentials
+  Cloudflare->>+API: Encoded credentials
+  API->>API: Hash password with salt
+  API->>MongoDB: Lookup user in UsersDB
+  alt User found
+    API->>API: Authenticate user
+    API->>API: Generate Firebase token
+    API->>API: Generate GraphQL API token
+    API->>-Cloudflare: Firebase & GraphQL tokens
+    Cloudflare->>-Client: Firebase & GraphQL tokens
+    Client->>+Firebase: Access FirebaseDB (with token)
+    Client->>+Cloudflare: Access GraphQL API (with token)
+    Cloudflare->>+API: GraphQL request (with token)
+    API->>+MongoDB: Access MongoDB (if authorized)
+  else User not found
+    API->>-Cloudflare: Authentication failed
+    Cloudflare->>-Client: Authentication failed
+  end
+  ```
+
+### Barcode Scanning and Product Lifecycle
+
+The barcode scanning process is a core feature of the app. Each scanned product goes through a lifecycle that includes data mining, user input, and admin verification. Furthermore, the fully automated nutrition analysis is a  can be enhanced by user input. The following state diagram illustrates the product lifecycle from scanning a barcode to enhancing product information:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Scanning : User scans barcode
+    Scanning --> Available : Product Found
+    Scanning --> DataM : Product Not Found
+
+    DataM --> Available : Product Found
+    DataM --> Awaiting : Product Not Found, User Asked for Input
+
+    Awaiting --> Available : User Provides Data
+    Awaiting --> NotF2 : User Declines Input
+
+    Available --> Enhanced : User Adds Info/Comments
+    Enhanced --> Verified : Admin Verification
+    Verified --> Available : Changes Made
+
+    DataM : Data Mining
+    Awaiting: Awaiting User Input
+    NotF2: Not Found
+    Available: Product information is displayed
+
+ ```
+
+### Frontend (Flutter)
+   A crucial aspect of the Flutter app's structure is the navigation between screens. While representing a small part of the codebase, the screen management system is fundamental as it controls the flow and user experience throughout the entire application. This is illustrated in the following UML diagram:
+
+   ```mermaid
+classDiagram
+  class ScreenManagerState {
+    -PageController* _pageController
+    +Home* home
+    +Camera* camera
+    +Profile* profile
+    +String* userName
+    +void initState()
+    +void dispose()
+    +void switchItem()
+    +void changePage()
+    +Widget* build()
+  }
+
+
+
+
+
+  class Home {
+    +void initState()
+    +void dispose()
+    +void search()
+    +Widget* build()
+    +void loadAds()
+    +void displayInterstitial()
+  }
+
+  class Camera {
+    +void initState()
+    +void initializeCamera()
+    +void dispose()
+    +void detectCode()
+    +void onBarcodeDetectorClosedError()
+    +void startImageStream()
+    +Widget* build()
+    +void showErrorProductNotFound()
+  }
+
+  class Profile {
+    +Widget* build()
+    +void listSavedProducts()
+    +void listCommentedProducts()
+  }
+
+  ScreenManagerState o-- Home
+  ScreenManagerState o-- Camera
+  ScreenManagerState o-- Profile
+  State <|-- ScreenManagerState
+  StatefulWidget <|-- Home
+  State <|-- Home
+  StatefulWidget <|-- Camera
+  Camera o-- BarcodeScanner
+  Camera o-- CameraController
+  State <|-- Camera
+  StatefulWidget <|-- Profile
+  ```
 ## Data Mining
 
 Obtaining reliable and comprehensive product data for intolerance tracking is a significant challenge. To overcome this, we utilized data mining techniques to build a robust product database.
