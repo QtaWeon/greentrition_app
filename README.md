@@ -6,6 +6,8 @@
 
 
 greentrition is a Flutter app that empowers users with food intolerances to make informed choices. Scan barcodes, discover ingredients, and find products that fit your dietary needs. (Developed in 2021 as a personal project, the app is available in German.)
+<br>
+The services were also available from the web: https://greentrition.de/ .
 
 ## Features
 
